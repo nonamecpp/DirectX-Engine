@@ -4,22 +4,16 @@
 #include<Windows.h>
 using namespace std;
 
+#define TEXT_DEFAULT TEXT[0]
 const string APPTITLE = "TestEngine";
 HWND window_hwnd;
 bool gameover = false;
 bool MOUSE_LOCKED = false;
 bool pause = false;
-LPDIRECT3DSURFACE9 SURFbackground;
-LPDIRECT3DSURFACE9 SURFACE[300];
-LPDIRECT3DTEXTURE9 SPRITE[505];
-SPRITE_RECT SPRITE_INFO[505];
-LPDIRECT3DSURFACE9 FLASH[21][500];
-MESSAGECODE FlashCode[21];
-LPD3DXFONT TEXT[23];
+
 ofstream PriSurfLog;
 STAGE forestage, nowstage;
 float fps;
-
 
 LPDIRECT3DSURFACE9 tempSurf;
 
@@ -92,10 +86,8 @@ void Game_Run(HWND hwnd) {
 	if (d3ddev->BeginScene()) {
 		d3ddev->StretchRect(SURFbackground, NULL, backbuffer, NULL, D3DTEXF_NONE);
 		spriteobj->Begin(D3DXSPRITE_ALPHABLEND);
+		FontPrint("Test Console", make_rect(0, 0), DCblue, TEXT_DEFAULT);
 		print_surface();
-		//		Sprite_Draw_Frame(SPRITE[TPflash_wating_player], 0, 0, 39,
-		//			SCREENH, SCREENH, 8, 255);
-		//		DrawSurface2(backbuffer, FullRect, tempSurf);
 		spriteobj->End();
 		d3ddev->EndScene();
 		d3ddev->Present(NULL, NULL, NULL, NULL);
@@ -103,14 +95,14 @@ void Game_Run(HWND hwnd) {
 }
 void Game_End() {
 	if (SURFbackground)SURFbackground->Release();
-	for (int i = 1; i <= SURFACE_SIZE; i++) {
+	for (int i = 1; i <= SURFACE_KIND_SIZE; i++) {
 		if (SURFACE[i])SURFACE[i]->Release();
 	}
 	DirectInput_Shutdown();
 	Direct3D_Shutdown();
 }
 void update_movment_key(HWND window) {
-	while (!(GetForegroundWindow() == window));
+	if (!(GetForegroundWindow() == window))return;
 	if (Key_Down(VK_F4) && Key_Down(VK_MENU)) {
 		gameover = 1;
 	}
@@ -141,7 +133,8 @@ void init(HWND hwnd) {
 //	SURFACE[TPbackgound_start] = LoadSurface("main_page\\background.png");
 //	SPRITE_INFO[TPstart_startgame] = make_sprite_rect(265, 401, 2);
 	SURFACE[TPbackground] = LoadSurface("background.png");
-
+	SURFbackground = LoadSurface("background.png");
+	TEXT[0] = MakeFont("Consolas", 36);
 	//random init
 	srand(time(0));
 	int seed = rand() % 10000 + rand() % 10000 * 10000;

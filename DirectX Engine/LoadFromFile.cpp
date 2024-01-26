@@ -27,9 +27,14 @@ void LoadSpriteSettings(string FileName) {
 	ifstream fin;
 	string name;
 	int a, r, g, b, tag;
+	int wid, hei, ml;
 	fin.open(FileName.c_str(), ios::in);
 	for (SPRITE_KIND_SIZE = 0; fin >> name >> tag; SPRITE_KIND_SIZE++) {
 		if (tag)fin >> a >> r >> g >> b;
+		fin >> wid >> hei >> ml;
+		SPRITE_INFO[SPRITE_KIND_SIZE + 1].framew = wid;
+		SPRITE_INFO[SPRITE_KIND_SIZE + 1].frameh = hei;
+		SPRITE_INFO[SPRITE_KIND_SIZE + 1].column = ml;
 		SPRITE[SPRITE_KIND_SIZE + 1] = LoadTexture(name, D3DCOLOR_ARGB(a, r, g, b));
 	}
 	fin.close();

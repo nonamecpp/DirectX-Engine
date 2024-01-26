@@ -47,9 +47,6 @@
     <ClCompile Include="MyDirectX.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DataStructure.h">
-      <Filter>头文件</Filter>
-    </ClCompile>
     <ClCompile Include="NewEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

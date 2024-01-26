@@ -1,6 +1,5 @@
 #include"MyDirectX.h"
 #include"MessageEnum.h"
-#include"DataStructure.h"
 
 CODE_MANAGER<MESSAGE_SURF>SurfManager;
 prior_iterator<MESSAGE_SURF>SurfSorter;
@@ -24,9 +23,9 @@ int mouseX, mouseY;
 
 void PrintSurf(SURF_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
 	MESSAGE_SURF temp;
-	temp.msg.surface.type = type;
+	temp.surface.type = type;
 	temp.priority = prior;
-	temp.msg.surface.rect = position;
+	temp.surface.rect = position;
 	temp.obj = object;
 	temp.state = state;
 	temp.code = SurfManager.regist(temp);
@@ -34,9 +33,8 @@ void PrintSurf(SURF_TYPE type, int prior, RECT position, OBJECTCODE object, MESS
 }
 void RegistSprite(SPRITE_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
 	MESSAGE_SURF temp;
-	temp.msg.sprite.type = type;
+	temp.sprite.type = type;
 	temp.priority = prior;
-	temp.msg.sprite.rect = position;
 	temp.obj = object;
 	temp.state = state;
 	temp.code = SurfManager.regist(temp);
@@ -44,9 +42,7 @@ void RegistSprite(SPRITE_TYPE type, int prior, RECT position, OBJECTCODE object,
 }
 void RegistFlash(FLASH_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
 	MESSAGE_SURF temp;
-	temp.msg.flash.type = type;
 	temp.priority = prior;
-	temp.msg.flash.rect = position;
 	temp.obj = object;
 	temp.state = state;
 	temp.code = SurfManager.regist(temp);
@@ -68,65 +64,56 @@ void DeleteSurface(MESSAGECODE code) {
 	SurfManager.out(code);
 }
 
-DELAY_MESSAGE delay_move_make(int time_point, MESSAGECODE code, RECT position) {
+DELAY_MESSAGE delay_make(DELAY_TYPE type, int time_point, MESSAGECODE code, RECT position, int ContiSize, int flamex) {
 	DELAY_MESSAGE t;
 	t.fixed_time = time_point;
 	t.code = code;
 	t.rect = position;
-	t.delay = delayMOVE;
-	return t;
-}
-DELAY_MESSAGE delay_continue_make(int time_point, MESSAGECODE code, int ContiSize) {
-	DELAY_MESSAGE t;
-	t.fixed_time = time_point;
-	t.code = code;
+	t.delay = type;
 	t.ContiSize = ContiSize;
-	t.delay = delayCONTINUE;
+	t.pos = flamex;
 	return t;
 }
-DELAY_MESSAGE delay_next_make(int time_point, MESSAGECODE code, int flamex) {
-	DELAY_MESSAGE t;
-	t.fixed_time = time_point;
-	t.code = code;
-	t.pos = flamex;
-	t.delay = delayNEXT;
-	return t;
+DELAY_MESSAGE delay_sprite_move_make(int time_point, MESSAGECODE code, RECT position) {
+	return delay_make(delaySPRITE_MOVE, time_point, code, position, 0, 0);
+}
+DELAY_MESSAGE delay_sprite_continue_make(int time_point, MESSAGECODE code, int ContiSize) {
+	return delay_make(delaySPRITE_CONTINUE, time_point, code, make_rect(0, 0), ContiSize, 0);
+}
+DELAY_MESSAGE delay_sprite_next_make(int time_point, MESSAGECODE code, int flamex) {
+	return delay_make(delaySPRITE_NEXT, time_point, code, make_rect(0, 0), 0, flamex);
 }
 DELAY_MESSAGE delay_delete_make(int time_point, MESSAGECODE code) {
-	DELAY_MESSAGE t;
-	t.fixed_time = time_point;
-	t.code = code;
-	t.delay = delayDELETE;
-	return t;
+	return delay_make(delayDELETE, time_point, code, make_rect(0, 0), 0, 0);
 }
 void print_surface() {
 	SurfSorter.addall(SurfManager);
 	for (SurfSorter.iterbegin(); !SurfSorter.iterend(); SurfSorter.iternext()) {
 		MESSAGE_SURF CurSurf = SurfSorter.iterget();
 		if (CurSurf.state == msgSURFACE_SHOW || CurSurf.state == msgSURFACE_TRANSPARENT)
-			DrawSurface2(backbuffer, CurSurf.msg.surface.rect, SURFACE[CurSurf.msg.surface.type]);
+			DrawSurface2(backbuffer, CurSurf.surface.rect, SURFACE[CurSurf.surface.type]);
 		if (CurSurf.state == msgSURFACE_SHOW || CurSurf.state == msgSURFACE_HIDE_CHOOSEABLE)
-			AlgoScreenCoverPicture(CurSurf.msg.surface.rect.left, CurSurf.msg.surface.rect.top,
-				CurSurf.msg.surface.rect.right - CurSurf.msg.surface.rect.left,
-				CurSurf.msg.surface.rect.bottom - CurSurf.msg.surface.rect.top,
+			AlgoScreenCoverPicture(CurSurf.surface.rect.left, CurSurf.surface.rect.top,
+				CurSurf.surface.rect.right - CurSurf.surface.rect.left,
+				CurSurf.surface.rect.bottom - CurSurf.surface.rect.top,
 				CurSurf.code);
 
 		if (CurSurf.state == msgSPRITE_SHOW || CurSurf.state == msgSPRITE_TRANSPARENT)
-			Sprite_Draw_Frame(SPRITE[CurSurf.msg.sprite.type],
-				CurSurf.msg.sprite.rect.left, CurSurf.msg.sprite.rect.top,
-				CurSurf.msg.sprite.pos, SPRITE_INFO[CurSurf.msg.sprite.type].framew,
-				SPRITE_INFO[CurSurf.msg.sprite.type].frameh, 
-				SPRITE_INFO[CurSurf.msg.sprite.type].column, 
-					CurSurf.msg.sprite.pos);
+			Sprite_Draw_Frame(SPRITE[CurSurf.sprite.type], CurSurf.sprite.rect.left, CurSurf.sprite.rect.top,
+				CurSurf.sprite.pos, SPRITE_INFO[CurSurf.sprite.type].framew,
+				SPRITE_INFO[CurSurf.sprite.type].frameh,
+				SPRITE_INFO[CurSurf.sprite.type].column,
+				CurSurf.trans);
 		if (CurSurf.state == msgSPRITE_SHOW || CurSurf.state == msgSPRITE_HIDE_CHOOSEABLE)
-			AlgoScreenCoverPicture(CurSurf.msg.sprite.rect.left, CurSurf.msg.sprite.rect.top, 
-				SPRITE_INFO[CurSurf.msg.sprite.type].framew, SPRITE_INFO[CurSurf.msg.sprite.type].frameh, 
+			AlgoScreenCoverPicture(CurSurf.sprite.rect.left, CurSurf.sprite.rect.top,
+				SPRITE_INFO[CurSurf.sprite.type].framew, SPRITE_INFO[CurSurf.sprite.type].frameh,
 				CurSurf.code);
 		if (CurSurf.state == msgTEXT_SHOW || CurSurf.state == msgTEXT_TRANSPARENT)
 			FontPrint(CurSurf.text.msg, CurSurf.text.rect, CurSurf.text.color, TEXT[CurSurf.text.type]);
 		if (CurSurf.state == msgTEXT_SHOW || CurSurf.state == msgTEXT_HIDE_CHOOSEABLE)
-			AlgoScreenCoverPicture(CurSurf.msg.sprite.rect.left, CurSurf.msg.sprite.rect.top,
-				SPRITE_INFO[CurSurf.msg.sprite.type].framew, SPRITE_INFO[CurSurf.msg.sprite.type].frameh,
+			AlgoScreenCoverPicture(CurSurf.text.rect.left, CurSurf.text.rect.top,
+				CurSurf.text.rect.right - CurSurf.text.rect.left,
+				CurSurf.text.rect.bottom - CurSurf.text.rect.top,
 				CurSurf.code);
 	}
 	SurfSorter.cleariter();
@@ -159,22 +146,22 @@ void delay_solve() {
 		DELAY_MESSAGE msg = message_delay.top();
 		message_delay.pop();
 		MESSAGECODE code = msg.code;
-		if (msg.delay == delayNEXT)SurfManager.code_concrete[code].pos = msg.pos;
+		if (msg.delay == delaySPRITE_NEXT)SurfManager.code_concrete[code].sprite.pos = msg.pos;
 		if (msg.delay == delayDELETE)DeleteSurface(code);
-		if (msg.delay == delayMOVE)SurfManager.code_concrete[code].rect = msg.rect;
-		if (msg.delay == delayCONTINUE) {
-			SurfManager.code_concrete[code].pos = (SurfManager.code_concrete[code].pos + 1) % msg.ContiSize;
+		if (msg.delay == delaySPRITE_MOVE)SurfManager.code_concrete[code].sprite.rect = msg.rect;
+		if (msg.delay == delaySPRITE_CONTINUE) {
+			SurfManager.code_concrete[code].sprite.pos = (SurfManager.code_concrete[code].sprite.pos + 1) % msg.ContiSize;
 			msg.fixed_time += 1000 / fps;
 			message_delay.push(msg);
 		}
 		if (msg.delay == delayFLASH_NEXT) {
-			SurfManager.code_concrete[code].pos = msg.pos;
+			SurfManager.code_concrete[code].flash.pos = msg.pos;
 			//			MessageBox(window_hwnd, "flash next", " flash", MB_OK);
 			//			FLASH[code_concrete[code].flash] = LoadSurface(FlashFileName(code_concrete[code].flash, msg.pos));
 		}
 		if (msg.delay == delayFLASH_CONTINUE) {
 			//			MessageBox(window_hwnd, "flash continue", " flash", MB_OK);
-			SurfManager.code_concrete[code].pos = (SurfManager.code_concrete[code].pos + 1) % msg.ContiSize;
+			SurfManager.code_concrete[code].flash.pos = (SurfManager.code_concrete[code].flash.pos + 1) % msg.ContiSize;
 			//			FLASH[code_concrete[code].flash] = LoadSurface(FlashFileName(code_concrete[code].flash, code_concrete[code].pos));
 			msg.fixed_time += 1000 / fps;
 			message_delay.push(msg);

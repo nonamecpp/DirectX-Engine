@@ -12,6 +12,7 @@ LPDIRECTINPUT8 dinput = NULL;
 LPDIRECTINPUTDEVICE8 dimouse = NULL;
 LPDIRECTINPUTDEVICE8 dikeyboard = NULL;
 DIMOUSESTATE mouse_state;
+char keys[256];
 
 LPD3DXSPRITE spriteobj;
 
@@ -81,12 +82,13 @@ LPDIRECT3DTEXTURE9 LoadTexture(string filename, D3DCOLOR transcolor) {
 LPD3DXFONT MakeFont(string name, int size) {
 	LPD3DXFONT font = NULL;
 	D3DXFONT_DESC desc = { size,0,0,0,false,DEFAULT_CHARSET,OUT_TT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_PITCH,"" };
-	strcpy(desc.FaceName, name.c_str());
+	strcpy_s(desc.FaceName, name.c_str());
 	D3DXCreateFontIndirect(d3ddev, &desc, &font);
 	return font;
 }
 void FontPrint(string text, RECT pos, D3DCOLOR color, LPD3DXFONT font) {
-	font->DrawTextA(spriteobj, text.c_str(), text.length(), &pos, DT_LEFT, color);
+	font->DrawText(NULL, text.c_str(), text.length(), &pos, DT_CALCRECT, color);
+	font->DrawText(spriteobj, text.c_str(), text.length(), &pos, DT_LEFT, color);
 }
 D3DXVECTOR2 GetBitmapSize(string filename) {
 	D3DXIMAGE_INFO info;

@@ -46,11 +46,14 @@ enum STAGE {
 };
 enum DELAY_TYPE {
 	delayNONE,
-	delayNEXT,
 	delayDELETE,
-	delayHIDE,
-	delayMOVE,
-	delayCONTINUE,
+	delaySPRITE_NEXT,
+	delaySPRITE_SHOW,
+	delaySPRITE_HIDE,
+	delaySPRITE_TRANSPARENT,
+	delaySPRITE_HIDE_CHOOSEABLE,
+	delaySPRITE_MOVE,
+	delaySPRITE_CONTINUE,
 	delayFLASH_NEXT,
 	delayFLASH_CONTINUE
 };

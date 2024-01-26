@@ -145,7 +145,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DataStructure.h" />
     <ClCompile Include="DirectX Engine.cpp" />
     <ClCompile Include="LoadFromFile.cpp" />
     <ClCompile Include="MyDirectX.cpp" />
