@@ -94,8 +94,8 @@ struct MESSAGE_SURF {
 struct MESSAGE_SURF_SIMPLIFIED {
 	MESSAGECODE code;
 	int priority;
-	bool operator <(const MESSAGE_SURF_SIMPLIFIED b) const { return priority < b.priority; }
-	bool operator >(const MESSAGE_SURF_SIMPLIFIED b) const { return priority > b.priority; }
+	bool operator<(const MESSAGE_SURF_SIMPLIFIED b) const { return priority < b.priority; }
+	bool operator>(const MESSAGE_SURF_SIMPLIFIED b) const { return priority > b.priority; }
 };
 struct SPRITE_RECT {
 	int framew, frameh;
@@ -108,8 +108,8 @@ struct DELAY_MESSAGE {
 	int ContiSize;
 	RECT rect;
 	int pos;
-	bool operator <(const DELAY_MESSAGE b) const { return fixed_time < b.fixed_time; }
-	bool operator >(const DELAY_MESSAGE b) const { return fixed_time > b.fixed_time; }
+	bool operator<(const DELAY_MESSAGE b) const { return fixed_time < b.fixed_time; }
+	bool operator>(const DELAY_MESSAGE b) const { return fixed_time > b.fixed_time; }
 };
 
 //#define OpenLog 1
