@@ -24,6 +24,8 @@
 #include<deque>
 #include<time.h>
 #include<Windows.h>
+#include<thread>
+#include<mutex>
 #include"MessageEnum.h"
 #include"D3DColors.h"
 using namespace std;

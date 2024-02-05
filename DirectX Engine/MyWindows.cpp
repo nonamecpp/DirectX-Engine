@@ -132,8 +132,7 @@ void init(HWND hwnd) {
 	// data init
 //	SURFACE[TPbackgound_start] = LoadSurface("main_page\\background.png");
 //	SPRITE_INFO[TPstart_startgame] = make_sprite_rect(265, 401, 2);
-	SURFACE[TPbackground] = LoadSurface("background.png");
-	SURFbackground = LoadSurface("background.png");
+	SURFbackground = LoadSurface("pictures\\surface\\background.png");
 	TEXT[0] = MakeFont("Consolas", 36);
 	//random init
 	srand(time(0));
