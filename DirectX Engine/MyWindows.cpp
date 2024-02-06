@@ -98,6 +98,12 @@ void Game_End() {
 	for (int i = 1; i <= SURFACE_KIND_SIZE; i++) {
 		if (SURFACE[i])SURFACE[i]->Release();
 	}
+	for (int i = 1; i <= SPRITE_KIND_SIZE; i++) {
+		if (SURFACE[i])SPRITE[i]->Release();
+	}
+	for (int i = 1; i <= TEXT_KIND_SIZE; i++) {
+		if (SURFACE[i])TEXT[i]->Release();
+	}
 	DirectInput_Shutdown();
 	Direct3D_Shutdown();
 }
@@ -133,7 +139,7 @@ void init(HWND hwnd) {
 //	SURFACE[TPbackgound_start] = LoadSurface("main_page\\background.png");
 //	SPRITE_INFO[TPstart_startgame] = make_sprite_rect(265, 401, 2);
 	SURFbackground = LoadSurface("pictures\\surface\\background.png");
-	TEXT[0] = MakeFont("Consolas", 36);
+	TEXT[0] = MakeFont("Consolas", 24);
 	//random init
 	srand(time(0));
 	int seed = rand() % 10000 + rand() % 10000 * 10000;

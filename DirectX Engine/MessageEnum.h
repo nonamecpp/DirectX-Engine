@@ -26,19 +26,19 @@ enum MESSAGE_PHISICS {
 	phsTEST_CHANGE_
 };
 enum SPRITE_TYPE {
-	TPsprite_none,
+	TPsprite_default,
 	TPsprite_test
 };
 enum FLASH_TYPE {
-	TPflash_none,
+	TPflash_default,
 	TPflash_test,
 };
 enum SURF_TYPE {
-	TPsurf_none,
+	TPsurf_default,
 	TPbackground,
 };
 enum TEXT_TYPE {
-	TPtext_consolas24,
+	TPtext_default,
 
 };
 enum STAGE {
