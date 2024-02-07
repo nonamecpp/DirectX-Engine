@@ -412,10 +412,10 @@ void update_movment_key(HWND window);
 void update_screen_picture();
 void RenewMouseOn();
 //surface deal
-void PrintSurf(SURF_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state = msgSURFACE_SHOW);
-void RegistSprite(SPRITE_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state = msgSPRITE_SHOW);
-void RegistFlash(FLASH_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state = msgFLASH_SHOW); 
-void PrintText(TEXT_TYPE type, int prior, RECT position, string message, D3DCOLOR color, OBJECTCODE object, MESSAGE_SURF_STATE state);
+MESSAGECODE PrintSurf(SURF_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state = msgSURFACE_SHOW);
+MESSAGECODE RegistSprite(SPRITE_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state = msgSPRITE_SHOW);
+MESSAGECODE RegistFlash(FLASH_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state = msgFLASH_SHOW);
+MESSAGECODE PrintText(TEXT_TYPE type, int prior, RECT position, string message, D3DCOLOR color, OBJECTCODE object, MESSAGE_SURF_STATE state);
 DELAY_MESSAGE delay_sprite_move_make(int time_point, MESSAGECODE code, RECT position);
 DELAY_MESSAGE delay_sprite_continue_make(int time_point, MESSAGECODE code, int ContiSize);
 DELAY_MESSAGE delay_sprite_next_make(int time_point, MESSAGECODE code, int flamex);

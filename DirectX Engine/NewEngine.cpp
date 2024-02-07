@@ -21,7 +21,7 @@ MESSAGECODE screen_string_tree[SCREENH + 5][SCREENW * 16 + 30];
 MESSAGECODE mouse_place;
 int mouseX, mouseY;
 
-void PrintSurf(SURF_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
+MESSAGECODE PrintSurf(SURF_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
 	MESSAGE_SURF temp;
 	temp.surface.type = type;
 	temp.priority = prior;
@@ -30,8 +30,9 @@ void PrintSurf(SURF_TYPE type, int prior, RECT position, OBJECTCODE object, MESS
 	temp.state = state;
 	temp.code = SurfManager.regist(temp);
 	SurfManager.code_concrete[temp.code].code = temp.code;
+	return temp.code;
 }
-void RegistSprite(SPRITE_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
+MESSAGECODE RegistSprite(SPRITE_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
 	MESSAGE_SURF temp;
 	temp.sprite.type = type;
 	temp.priority = prior;
@@ -39,16 +40,18 @@ void RegistSprite(SPRITE_TYPE type, int prior, RECT position, OBJECTCODE object,
 	temp.state = state;
 	temp.code = SurfManager.regist(temp);
 	SurfManager.code_concrete[temp.code].code = temp.code;
+	return temp.code;
 }
-void RegistFlash(FLASH_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
+MESSAGECODE RegistFlash(FLASH_TYPE type, int prior, RECT position, OBJECTCODE object, MESSAGE_SURF_STATE state) {
 	MESSAGE_SURF temp;
 	temp.priority = prior;
 	temp.obj = object;
 	temp.state = state;
 	temp.code = SurfManager.regist(temp);
 	SurfManager.code_concrete[temp.code].code = temp.code;
+	return temp.code;
 }
-void PrintText(TEXT_TYPE type, int prior, RECT position, string message, D3DCOLOR color, OBJECTCODE object, MESSAGE_SURF_STATE state) {
+MESSAGECODE PrintText(TEXT_TYPE type, int prior, RECT position, string message, D3DCOLOR color, OBJECTCODE object, MESSAGE_SURF_STATE state) {
 	MESSAGE_SURF temp;
 	temp.text.type = type;
 	temp.priority = prior;
@@ -59,6 +62,7 @@ void PrintText(TEXT_TYPE type, int prior, RECT position, string message, D3DCOLO
 	temp.state = state;
 	temp.code = SurfManager.regist(temp);
 	SurfManager.code_concrete[temp.code].code = temp.code;
+	return temp.code;
 }
 void DeleteSurface(MESSAGECODE code) {
 	SurfManager.out(code);
