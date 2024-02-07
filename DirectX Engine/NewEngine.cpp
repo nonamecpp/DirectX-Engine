@@ -91,7 +91,9 @@ DELAY_MESSAGE delay_delete_make(int time_point, MESSAGECODE code) {
 	return delay_make(delayDELETE, time_point, code, make_rect(0, 0), 0, 0);
 }
 void print_surface() {
+	SurfManager.lock();
 	SurfSorter.addall(SurfManager);
+	SurfManager.unlock();
 	for (SurfSorter.iterbegin(); !SurfSorter.iterend(); SurfSorter.iternext()) {
 		MESSAGE_SURF CurSurf = SurfSorter.iterget();
 		if (CurSurf.state == msgSURFACE_SHOW || CurSurf.state == msgSURFACE_TRANSPARENT)
@@ -172,6 +174,24 @@ void delay_solve() {
 		}
 	}
 }
+
+D3DCOLOR ColorMake12(char rgb[3]) {
+#define turnint(ch1) (isdigit(ch1))?(ch1-'0'):('a'<=ch1&&ch1<='f')?(ch1-'a'+10):('A'<=ch1&&ch1<='F')?(ch1-'A'+10):-1
+	int r = turnint(rgb[0]) * 17;
+	int g = turnint(rgb[1]) * 17;
+	int b = turnint(rgb[2]) * 17;
+	if (r < 0 || g < 0 || b < 0)return NULL;
+	return D3DCOLOR_XRGB(r, g, b);
+}
+D3DCOLOR ColorMake24(char rgb[6]) {
+#define turnint(ch1) (isdigit(ch1))?(ch1-'0'):('a'<=ch1&&ch1<='f')?(ch1-'a'+10):('A'<=ch1&&ch1<='F')?(ch1-'A'+10):-1
+	int r = turnint(rgb[0]) * 16 + turnint(rgb[1]);
+	int g = turnint(rgb[2]) * 17 + turnint(rgb[3]);
+	int b = turnint(rgb[4]) * 17 + turnint(rgb[5]);
+	if (r < 0 || g < 0 || b < 0)return NULL;
+	return D3DCOLOR_XRGB(r, g, b);
+}
+
 void push_tag(int srnh, int x) {
 	if (screen_string_tree[srnh][x] == 0)return;
 	screen_string_tree[srnh][x * 2] = screen_string_tree[srnh][x];
@@ -217,6 +237,7 @@ void AlgoClearScreenMsg() {
 		ScreenStringtreeRenew(i, -1, 1, SCREENW);
 	}
 }
+
 bool Between(int l, int r, int u, int d) {
 	if (l <= mouseX && r <= mouseX && u <= mouseY && mouseY <= d)return 1;
 	return 0;

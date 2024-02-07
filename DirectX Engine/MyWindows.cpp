@@ -1,6 +1,7 @@
 #include"DirectX Engine.h"
 #include"MyDirectX.h"
 #include"MessageEnum.h"
+#include"EngineAlgorithm.h"
 #include<Windows.h>
 using namespace std;
 
@@ -13,10 +14,11 @@ bool pause = false;
 
 ofstream PriSurfLog;
 STAGE forestage, nowstage;
-float fps;
+double fps;
+
+bool ShowFps = 0;
 
 LPDIRECT3DSURFACE9 tempSurf;
-
 RECT FullRect;
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -53,16 +55,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	window_hwnd = hwnd;
 	if (!Game_Init(hwnd))return 0;
 	init(hwnd);
+	thread d3d_main(Game_Run);
 	while (!gameover) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 		update();
-		Game_Run(hwnd);
-		update_keys();
 	}
-	Game_End();
+	d3d_main.join();
 	return msg.wParam;
 }
 bool Game_Init(HWND window) {
@@ -76,22 +77,33 @@ bool Game_Init(HWND window) {
 	}
 	return true;
 }
-void Game_Run(HWND hwnd) {
+void Game_Run() {
 	if (!d3ddev)return;
-	update_screen_picture();
-	update_movment_key(hwnd);
-	DirectInput_Update();
-	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-	d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backbuffer);
-	if (d3ddev->BeginScene()) {
-		d3ddev->StretchRect(SURFbackground, NULL, backbuffer, NULL, D3DTEXF_NONE);
-		spriteobj->Begin(D3DXSPRITE_ALPHABLEND);
-		FontPrint("Test Console", make_rect(0, 0), DCblue, TEXT_DEFAULT);
-		print_surface();
-		spriteobj->End();
-		d3ddev->EndScene();
-		d3ddev->Present(NULL, NULL, NULL, NULL);
+	int lst_clk = 0;
+	int fps_it = 0;
+	while (!gameover) {
+		fps_it++;
+		DirectInput_Update();
+		d3ddev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+		d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backbuffer);
+		if (d3ddev->BeginScene()) {
+			d3ddev->StretchRect(SURFbackground, NULL, backbuffer, NULL, D3DTEXF_NONE);
+			spriteobj->Begin(D3DXSPRITE_ALPHABLEND);
+			if (ShowFps) {
+				FontPrint(("fps : " + writedouble_str(fps,2)).c_str(), make_rect(0, 0), DCblue, TEXT_DEFAULT);
+			}
+			print_surface();
+			spriteobj->End();
+			d3ddev->EndScene();
+			d3ddev->Present(NULL, NULL, NULL, NULL);
+		}
+		if (clock() - lst_clk > 100) {
+			fps = fps_it * 1000.0 / (clock() - lst_clk);
+			lst_clk = clock();
+			fps_it = 0;
+		}
 	}
+	Game_End();
 }
 void Game_End() {
 	if (SURFbackground)SURFbackground->Release();
@@ -107,15 +119,6 @@ void Game_End() {
 	DirectInput_Shutdown();
 	Direct3D_Shutdown();
 }
-void update_movment_key(HWND window) {
-	if (!(GetForegroundWindow() == window))return;
-	if (Key_Down(VK_F4) && Key_Down(VK_MENU)) {
-		gameover = 1;
-	}
-	//	if (click(VK_ESCAPE)) {
-	//		pauser(!pause);
-	//	}
-}
 
 void update_screen_picture() {
 	MESSAGECODE code = CheckMouseOn();
@@ -130,8 +133,7 @@ void update_screen_picture() {
 void init(HWND hwnd) {
 	FullRect = make_rect(1, SCREENW, 1, SCREENH);
 	// fps
-	fps = 30;
-
+	ShowFps = 1;
 	//stage init
 	nowstage = STGempty;
 	forestage = STGempty;
@@ -167,4 +169,5 @@ void update() {
 	delay_solve();
 	RenewMouseOn();
 	update_screen_picture();
+	update_keys();
 }

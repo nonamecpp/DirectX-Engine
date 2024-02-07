@@ -41,8 +41,8 @@ using namespace std;
 //program values
 extern const string APPTITLE;
 extern bool gameover;
-const int SCREENW = 960;
-const int SCREENH = 780;
+const int SCREENW = 2560;
+const int SCREENH = 1600;
 const int priorbase_card_inqueue = 200;
 const int priorbase_background = 100;
 const int priorbase_card_onstage = 300;
@@ -145,6 +145,7 @@ private:
 	MESSAGE_SIMPLIFIED* first_plug;
 	stack<MESSAGE_SIMPLIFIED*>iterstackx;
 	stack<int>iterstackl, iterstackr, iterstackstate;
+	mutex mutext;
 	void __cdmg_inner_iteropt_push(int l, int r, MESSAGE_SIMPLIFIED* x, int state) {
 		iterstackl.push(l);
 		iterstackr.push(r);
@@ -286,10 +287,16 @@ public:
 #endif
 			return -1;
 		}
-		return __cdmg_inner_regist(&tobe_rigisted, first_plug, 1, max_code_store_size);
+		mutext.lock();
+		int code = __cdmg_inner_regist(&tobe_rigisted, first_plug, 1, max_code_store_size);
+		mutext.unlock();
+		return code;
 	}
 	bool out(int code) {
-		return __cdmg_inner_out(code, first_plug, 1, max_code_store_size);
+		mutext.lock();
+		bool f = __cdmg_inner_out(code, first_plug, 1, max_code_store_size);
+		mutext.unlock();
+		return f;
 	}
 	int size() { return codesize; }
 	MESSAGE get(int code) {
@@ -312,6 +319,8 @@ public:
 	void iternext() { __cdmg_inner_iterator_next(); }
 	MESSAGE iterget() { return __cdmg_inner_iterator_get(); }
 	void cleariter() { __cdmg_inner_iterator_clear(); }
+	void lock() { mutext.lock(); }
+	void unlock() { mutext.unlock(); }
 };
 template <class OBJECTCLASS> class prior_iterator {
 private:
@@ -348,7 +357,7 @@ class UniWindow {
 //windows objects
 extern ofstream PriSurfLog;
 extern HWND window_hwnd;
-extern float fps;
+extern double fps;
 extern bool MOUSE_LOCKED;
 extern bool pause;
 extern int key_click[300];
@@ -376,6 +385,9 @@ extern int TEXT_KIND_SIZE;
 extern int SURFACE_KIND_SIZE;
 extern int SPRITE_KIND_SIZE;
 
+extern CODE_MANAGER<MESSAGE_SURF> SurfManager;
+extern prior_iterator<MESSAGE_SURF> SurfSorter;
+
 //Direct3D functions
 bool Direct3D_Init(HWND hwnd, int width, int height, bool fullscreen);
 void Direct3D_Shutdown();
@@ -402,13 +414,12 @@ int Mouse_X();
 int Mouse_Y();
 //game functions
 bool Game_Init(HWND window);
-void Game_Run(HWND window);
+void Game_Run();
 void Game_End();
 //windows functions
 int randint(int _Min, int _Max);
 bool click(int key);
 void update_keys();
-void update_movment_key(HWND window);
 void update_screen_picture();
 void RenewMouseOn();
 //surface deal
