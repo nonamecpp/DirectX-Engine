@@ -1,0 +1,534 @@
+<html>
+    <head>
+        <!-- 头部信息 -->
+        <meta charset="UTF-8">
+        <title>BlackStone Engine Introdution</title>
+    </head>
+    <body link="#5f0000" vlink="#5f0000">
+        <div style="color:#000000;">
+            <div style="height: 100%;
+            width:250px;
+            float: left;
+            border-right:2px;
+            overflow:scroll;
+            overflow-x: hidden;
+            overflow-y: auto;">
+                <font size=7 face="Consolas">Menu</font><br>
+                <font face="Consolas">
+                    <ul style="margin-left: -24px;">
+                        <li><a href="#str_structure">架构</a></li>
+                        <ul style="margin-left: -24px;">
+                            <li><a href="#str_structure_message_surf">图像信息储存</a></li>
+                            <li><a href="#str_structure_output">图像信息输出</a></li>
+                            <li>list3</li>
+                        </ul>
+                        <li><a href="#struct">结构体(class,struct)</a></li>
+                        <ul style="margin-left: -24px;">
+                            <li><a href="#struct_CODE_MANAGER">CODE_MANAGER</a></li>
+                            <ul style="margin-left: -24px;">
+                                <li><a href="#struct_CODE_MANAGER_code_concrete">code_concrete</a></li>
+                                <li><a href="#struct_CODE_MANAGER_regist">regist()</a></li>
+                                <li><a href="#struct_CODE_MANAGER_out">out()</a></li>
+                                <li><a href="#struct_CODE_MANAGER_iterator">内置迭代器(iter)</a></li>
+                                <li><a href="#struct_CODE_MANAGER_size">size()</a></li>
+                                <li><a href="#struct_CODE_MANAGER_AllClear">AllClear()</a></li>
+                            </ul>
+                            <li><a href="#struct_prior_iterator">prior_iterator</a></li>
+                            <ul style="margin-left: -24px;">
+                                <li><a href="#struct_prior_iterator_iterator">内置迭代器(iter)</a></li>
+                                <li><a href="#struct_prior_iterator_add">add()</a></li>
+                                <li><a href="#struct_prior_iterator_addall">addall()</a></li>
+                            </ul>
+                            <li><a href="#struct_MESSAGE_SURF">MESSAGE_SURF</a></li>
+                            <ul style="margin-left: -24px;">
+                                <li><a href="#struct_MESSAGE_SURF_priority">priority</a></li>
+                                <li><a href="#struct_MESSAGE_SURF_obj">obj</a></li>
+                                <li><a href="#struct_MESSAGE_SURF_code">code</a></li>
+                                <li><a href="#struct_MESSAGE_SURF_msg">surface, sprite, flash, text</a></li>
+                            </ul>
+                        </ul>
+                        <li><a href="#enum">枚举类型(enum)</a></li>
+                        <ul style="margin-left: -24px;">
+                            <li><a href="#enum_MESSAGE_SURF_STATE">MESSAGE_SURF_STATE</a></li>
+                            <li><a href="#enum_alltype">
+                                SURF_TYPE<br>
+                                SPRITE_TYPE<br>
+                                FLASH_TYPE<br>
+                                TEXT_TYPE<br>
+                            </a></li>
+                            <li>list3</li>
+                        </ul>
+                        <li><a href="#function">函数</a></li>
+                        <ul style="margin-left: -24px;">
+                            <li>图像注册与删除</li>
+                            <ul style="margin-left: -24px;">
+                                <li><a href="#function_PrintSurf">PrintSurf()</a></li>
+                                <li><a href="#function_RegistSprite">RegistSprite()</a></li>
+                                <li><a href="#function_RegistFlash">RegistFlash()</a></li>
+                                <li><a href="#function_PrintText">PrintText()</a></li>
+                                <li><a href="#function_DeleteSurface">DeleteSurface()</a></li>
+                            </ul>
+                        </ul>
+                    </ul>
+                </font>
+            </div>
+            <div style="height: 100%;
+            margin-left:277px;
+            overflow:scroll;
+            overflow-x: auto;
+            overflow-y: auto;"><font face="Consolas">
+                <p id="str_structure">
+                    <font size=7 color="#5f5f5f">BlackStone引擎架构</font><br>
+                    <font size=3 color="#ff5f5f">Warning: 该引擎是2D引擎</font>
+                    <p id="str_structure_message_surf">
+                        <font size=6 color="#5f5f5f">图像信息储存</font><br>
+                        图像目前总共分为 4 个大类：<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;surface(图片)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sprite(精灵)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;flash(动画)<font color="#ff5f5f">(目前该类型的应用存在一定争议,
+                            游戏引擎尚未引入其完整的输入输出机制)</font><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;text(文本)<br>
+                        图像均以<a href="#struct_message_surf">MESSAGE_SURF</a>的形式存储信息,
+                        SPRITE类型有SPRITE_RECT SPRITE_INFO[300]记录精灵长宽以及一行所占精灵数量,
+                        FLASH类型有int FlashSize[21]记录图像总帧数,
+                        其余如位置信息等可变信息均由CODE_MANAGER SurfManager动态存储。<br>
+                        每次注册新图像可以通过以下四个函数进行：<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;PrintSurf:    注册surface<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;RegistSprite: 注册sprite<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;RegistFlash:  注册flash<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;PrintSurf:    注册text<br>
+                        每次删除图像可以通过<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;DeleteSurface<br>
+                        进行操作。<br>
+                        对图片进行预加载的操作已由<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;LoadSurfaceSettings<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;LoadSpriteSettings<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;LoadTextSettings<br>
+                        完成，但一定要先配置好<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;surface.txt<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sprite.txt<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;text.txt<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;flash.txt<br>
+                        几个文件。<br>
+                        此外, 文件预加载是一次加载所有文件,
+                        如对内存有要求, 请另写代码完成对图像的加载与释放。<br>
+                    </p>
+                    <p id="str_structure_output">
+                        <font size=6 color="#5f5f5f">图像信息输出</font><br>            
+                        图像信息的输出已由 DirectX 的函数完成,
+                        有关 DirectX 的函数均存储在 DirectX.cpp 中,
+                        不需要调用里面的函数(除click, 这是我自己写来用于判断键盘上按键是否按下的函数)。<br>
+                        MyWindows.cpp 包含了程序运行的主逻辑,
+                        唯一需要配置的是 init 和 update 函数,
+                        这两个函数用于初始化以及更新数据。<br>
+                        输出图像的最重要的函数在 print_surface() 上,
+                        这里通过 prior_iterator SurfSorter 对 SurfManager 进行排序与遍历,
+                        使图像数据以优先级从小到大依次访问,
+                        优先级最大的将绘制在最上层。<br>
+                        同时在绘制图像时,
+                        将自动设置图像位置
+                    </p>
+                </p>
+                <p id="struct">
+                    <font size=7 color="#5f5f5f">结构体(class,struct)</font><br>
+                    <p id="struct_CODE_MANAGER">
+                        <font size=6 color="#5f5f5f">CODE_MANAGER</font><br>
+                        <br>
+                        使用方法: CODE_MANAGER&lt要存的数据类型&gt 变量名<br>
+                        <p id="struct_CODE_MANAGER_code_concrete">
+                            <font size=5 color="#5f5f5f">code_concrete</font><br>
+                            这是存储数据的数组,
+                            在定义中它使用vector来增强其空间韧性,
+                            目前设计的最大容量是1e4。<br>
+                            使用示范：<br>
+                            <code>
+                                CODE_MANAGER&lt;int&gt;manager;<br>
+                                int code = manager.regist(50);<br>
+                                manager.code_concrete[code] = 100;<br>
+                            </code>
+                        </p>
+                        <p id="struct_CODE_MANAGER_regist">
+                            <font size=5 color="#5f5f5f">int regist(存储数据)</font><br>
+                            使用regist()申请一个位置存储数据,
+                            此时会返回一个int值记录存储的数据在code_concrete的下标。
+                        </p>
+                        <p id="struct_CODE_MANAGER_out">
+                            <font size=5 color="#5f5f5f">void out(int _code)</font><br>
+                            使用out()删除下标为 _code 的数据。
+                        </p>
+                        <p id="struct_CODE_MANAGER_iterator">
+                            <font size=5 color="#5f5f5f">内置迭代器(iter)</font><br>
+                            iterbegin():初始化迭代器<br>
+                            iterend():检查迭代是否结束，结束返回1，未结束返回0<br>
+                            iternext():迭代器移向下一位<br>
+                            iterget():返回迭代器目前位置的数据<br>
+                            cleariter():清空迭代器(结束时)<br>
+                            <font color="#ff0000">迭代完成一定要使用cleariter()清空迭代器</font><br>
+                            <br>
+                            示例：<br>
+                            <code>
+                                CODE_MANAGER&lt;int&gt; manager;<br>
+                                for(manager.iterbegin();!manager.iterend();manager.iternext()){<br>
+                                &nbsp;&nbsp;int x=manager.iterget();<br>
+                                &nbsp;&nbsp;<font color="#005f00">//do something?</font><br>
+                                }<br>
+                                cleariter();<br>
+                                <font color="#005f00">//remember to clear the iterator!</font><br>
+                            </code>
+                        </p>
+                        <p id="struct_CODE_MANAGER_size">
+                            <font size=5 color="#5f5f5f">int size()</font><br>
+                            返回目前管理器里数据的总量。
+                        </p>
+                        <p id="struct_CODE_MANAGER_AllClear">
+                            <font size=5 color="#5f5f5f">void AllClear()</font><br>
+                            清空所有数据。
+                        </p>
+                    </p>
+                    <p id="struct_prior_iterator">
+                    <font size=6 color="#5f5f5f">prior_iterator</font><br>
+                        源码：<br>
+                        <code>
+                            template &lt;class OBJECTCLASS&gt; class prior_iterator {<br>
+                            private:<br>
+                            &nbsp;&nbsp;vector&lt;OBJECTCLASS&gt; sequence;<br>
+                            &nbsp;&nbsp;int it;<br>
+                            public:<br>
+                            &nbsp;&nbsp;void cleariter() { sequence.clear(); }<br>
+                            &nbsp;&nbsp;void add(OBJECTCLASS _obj) { sequence.push_back(_obj); }<br>
+                            &nbsp;&nbsp;template &lt;typename MANAGER_CLASS&gt;void addall(MANAGER_CLASS& _pos) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;for (_pos.iterbegin(); !_pos.iterend(); _pos.iternext()) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;add(_pos.iterget());<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;_pos.cleariter();<br>
+                            &nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;void iterbegin() {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;sort(sequence.begin(), sequence.end());<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;it = 0;<br>
+                            &nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;OBJECTCLASS iterget() { return sequence[it]; }<br>
+                            &nbsp;&nbsp;bool iterend() { return it == sequence.size(); }<br>
+                            &nbsp;&nbsp;void iternext() { it++; }<br>
+                            };<br>
+                        </code><br>
+                        prior_iterator 是与 CODE_MANAGER 相适应的一段用于排序的结构体,
+                        通过调用结构体的内置迭代器完成导入数据。<br>
+                        内置迭代器使用方法与 CODE_MANAGER 相同。<br>
+                        <p id="struct_prior_iterator_iterator">
+                            <font size=5 color="#5f5f5f">内置迭代器(iter)</font><br>
+                            iterbegin():初始化迭代器<br>
+                            iterend():检查迭代是否结束，结束返回1，未结束返回0<br>
+                            iternext():迭代器移向下一位<br>
+                            iterget():返回迭代器目前位置的数据<br>
+                            cleariter():清空迭代器(结束时)<br>
+                            <font color="#ff0000">迭代完成一定要使用cleariter()清空迭代器</font><br>
+                            <br>
+                            示例：<br>
+                            <code>
+                                CODE_MANAGER&lt;int&gt; manager;<br>
+                                prior_iterator&lt;int&gt; iter;<br>
+                                <font color="#005f00">
+                                    //manager load data<br>
+                                    //->write something here ?<br>
+                                    <br>
+                                    //iterator load data from code manager<br>
+                                </font>
+                                iter.addall(manager);<br>
+                                for(iter.iterbegin();!iter.iterend();iter.iternext()){<br>
+                                &nbsp;&nbsp;int x=iter.iterget();<br>
+                                &nbsp;&nbsp;<font color="#005f00">//do something?</font><br>
+                                }<br>
+                                cleariter();<br>
+                                <font color="#005f00">//remember to clear the iterator!</font><br>
+                            </code>
+                        </p>
+                        <p id="struct_prior_iterator_add">
+                            <font size=5 color="#5f5f5f">void add(OBJECTCLASS _obj)</font><br>
+                            加入单条数据。
+                        </p>
+                        <p id="struct_prior_iterator_addall">
+                            <font size=5 color="#5f5f5f">void addall(MANAGER_CLASS& _pos)</font><br>
+                            一次性加入管理器中所有数据。<br>
+                            <font color="#ff5f5f">Warning: 管理器必须包含以下函数：<br>
+                            &nbsp;&nbsp;iterbegin(): 用于初始化迭代器，且初始完后立即可以访问第一个数据<br>
+                            &nbsp;&nbsp;iterend(): 检查迭代是否结束，结束返回1，未结束返回0<br>
+                            &nbsp;&nbsp;iternext(): 迭代器移向下一位<br>
+                            &nbsp;&nbsp;iterget(): 返回迭代器目前位置的数据<br>
+                            &nbsp;&nbsp;cleariter(): 清理迭代器，保证下一次迭代不受上一次影响<br>
+                            同时管理器管理的数据类型必须与迭代器迭代的数据类型相同。</font>
+                        </p>
+                    </p>
+                    <p id="struct_MESSAGE_SURF">
+                        <font size=6 color="#5f5f5f">MESSAGE_SURF</font><br>
+                        定义代码段：<br><br>
+                        <code>
+                            struct SurfaceMsg {<br>
+                            &nbsp;&nbsp;SURF_TYPE type;<br>
+                            &nbsp;&nbsp;RECT rect;<br>
+                            };<br>
+                            struct SpriteMsg {<br>
+                            &nbsp;&nbsp;SPRITE_TYPE type;<br>
+                            &nbsp;&nbsp;RECT rect;<br>
+                            &nbsp;&nbsp;int pos;<br>
+                            };<br>
+                            struct FlashMsg {<br>
+                            &nbsp;&nbsp;FLASH_TYPE type;<br>
+                            &nbsp;&nbsp;RECT rect;<br>
+                            &nbsp;&nbsp;int pos;<br>
+                            };<br>
+                            struct TextMsg {<br>
+                            &nbsp;&nbsp;TEXT_TYPE type;<br>
+                            &nbsp;&nbsp;RECT rect;<br>
+                            &nbsp;&nbsp;D3DCOLOR color;<br>
+                            &nbsp;&nbsp;string msg;<br>
+                            };<br>
+                            struct MESSAGE_SURF {<br>
+                            &nbsp;&nbsp;OBJECTCODE obj;<br>
+                            &nbsp;&nbsp;MESSAGECODE code;<br>
+                            &nbsp;&nbsp;MESSAGE_SURF_STATE state;<br>
+                            &nbsp;&nbsp;SurfaceMsg surface;<br>
+                            &nbsp;&nbsp;SpriteMsg sprite;<br>
+                            &nbsp;&nbsp;FlashMsg flash;<br>
+                            &nbsp;&nbsp;TextMsg text;<br>
+                            &nbsp;&nbsp;int priority;<br>
+                            &nbsp;&nbsp;bool operator &lt;(const MESSAGE_SURF b) const { return priority &lt; b.priority; }<br>
+                            &nbsp;&nbsp;bool operator &gt;(const MESSAGE_SURF b) const { return priority &gt; b.priority; }<br>
+                            };<br>
+                        </code>
+                        <p id="struct_MESSAGE_SURF_priority">
+                            MESSAGE_SURF已经重载运算符,
+                            比较大小是通过比较priority(优先级)大小进行的,
+                            即priority越大, MESSAGE_SURF越大。
+                        </p>
+                        <p id="struct_MESSAGE_SURF_obj">
+                            OBJECTCODE obj 用于记录图像所对应的实体的编号,
+                            该参数定义是int类型,
+                            最终用法应与MESSAGECODE相同。
+                        </p>
+                        <p id="struct_MESSAGE_SURF_code">
+                            MESSAGECODE code 用于记录图像编号(即在CODE_MANAGER SurfManager 图像管理器上注册的下标)
+                        </p>
+                        <p id="struct_MESSAGE_SURF_state">
+                            MESSAGE_SURF_STATE state 用于展示目前图像的状态。
+                        </p>
+                        <p id="struct_MESSAGE_SURF_msg">
+                            surface, sprite, flash, text 四者均是记录该图像的可变信息:<br>
+                            SurfaceMsg: <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;SURF_TYPE type: 具体哪一张加载的图片<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;RECT rect: 位置信息<br>
+                            SpriteMsg: <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;SPRITE_TYPE type: 具体哪一个加载的精灵<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;RECT rect: 位置信息<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;int pos: 目前播放到第几帧动作<br>
+                            FlashMsg: <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;FLASH_TYPE type: 具体哪一个加载的动画<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;RECT rect: 位置信息<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;int pos: 目前播放到第几帧图片<br>
+                            TextMsg: <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;TEXT_TYPE type: 具体哪一种加载的字体<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;RECT rect: 位置信息<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;D3DCOLOR color: 字体颜色<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;string msg: 要输出的文本<br>
+                        </p>
+                    </p>
+                </p>
+                <p id="enum">
+                    <font size=7 color="#5f5f5f">枚举类型(enum)</font><br>
+                    <p id="enum_MESSAGE_SURF_STATE">
+                        <font size=6 color="#5f5f5f">MESSAGE_SURF_STATE</font><br>
+                        图像一共有4种：<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;surface：图片<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sprite：精灵<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;flash：动画&nbsp;&nbsp;<font color="#ff5f5f">(目前该类型的应用存在一定争议,
+                            游戏引擎尚未引入其完整的输入输出机制)</font><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;text：文本<br>
+                        表现方式也有4种：<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;show：显示图像<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;hide：隐藏图像<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;transparent：透明图像<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;hide_chooseable：可选的隐藏图像<br>
+                        所以 MESSAGE_SURF 的标准状态一共有 16 种：<br>
+                        <table border="2">
+                            <tr>
+                                <th>MESSAGE_SURF_STATE</th>
+                                <th>show</th>
+                                <th>hide</th>
+                                <th>transparent</th>
+                                <th>hide_chooseable</th>
+                            </tr>
+                            <tr>
+                                <th>surface</th>
+                                <td>msgSURFACE_SHOW</td>
+                                <td>msgSURFACE_HIDE</td>
+                                <td>msgSURFACE_TRANSPARENT</td>
+                                <td>msgSURFACE_HIDE_CHOOSEABLE</td>
+                            </tr>
+                            <tr>
+                                <th>sprite</th>
+                                <td>msgSPRITE_HIDE</td>
+                                <td>msgSPRITE_SHOW</td>
+                                <td>msgSPRITE_TRANSPARENT</td>
+                                <td>msgSPRITE_HIDE_CHOOSEABLE</td>
+                            </tr>
+                            <tr>
+                                <th>flash</th>
+                                <td>msgFLASH_SHOW</td>
+                                <td>msgFLASH_HIDE</td>
+                                <td>msgFLASH_TRANSPARENT</td>
+                                <td>msgFLASH_HIDE_CHOOSEABLE</td>
+                            </tr>
+                            <tr>
+                                <th>text</th>
+                                <td>msgTEXT_SHOW</td>
+                                <td>msgTEXT_HIDE</td>
+                                <td>msgTEXT_TRANSPARENT</td>
+                                <td>msgTEXT_HIDE_CHOOSEABLE</td>
+                            </tr>
+                        </table>
+                        <br>
+                        除此以外还有一种类型: msgNONE<br>
+                        此类型表示该图像已被删除。<br>
+                    </p>
+                    <p id="enum_alltype">
+                        <font size=6 color="#5f5f5f">
+                            SURF_TYPE, SPRITE_TYPE, FLASH_TYPE, TEXT_TYPE<br>
+                        </font>
+                        此4种枚举类型依次与surface, sprite, flash, text四种类型一一对应,
+                        命名方式如下:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;TPsurf_background, TPsprite_dog, TPflash_blizzard, TPtext_consolas24<br>
+                        TPsurf, TPsprite, TPflash, TPtext后跟相应的名称,
+                        单词与单词之间以下划线分割,
+                        其中文本类型一定要加设置的字体大小以区分,
+                        同一种字体不同的大小在 DirectX 中依然被判定成不同字体。<br>
+                        与此同时, 每种类型都有自己的默认类型: <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;TPsurf_default, TPsprite_default, TPflash_default, TPtext_default(默认使用consolas字体, 大小24)<br>
+                        <br>
+                        
+                    </p>
+                </p>
+                <p id="function">
+                    <font size=7 color="#5f5f5f">函数</font><br>
+                    <p id="function_PrintSurf">
+                        <font size=6 color="#5f5f5f">PrintSurf()</font><br>
+                        绘制surface图像。<br>
+                        <br>
+                        <code>
+                            MESSAGECODE PrintSurf(<br>
+                            &nbsp;&nbsp;&nbsp;SURF_TYPE type,<br>
+                            &nbsp;&nbsp;&nbsp;int prior,<br>
+                            &nbsp;&nbsp;&nbsp;RECT position,<br>
+                            &nbsp;&nbsp;&nbsp;OBJECTCODE object,<br>
+                            &nbsp;&nbsp;&nbsp;MESSAGE_SURF_STATE state);<br>
+                        </code>
+                        <br>
+                        SURF_TYPE type : 即将绘制的surface图像<br>
+                        int prior : 图像优先级<br>
+                        RECT position : 图像位置<br>
+                        OBJECTCODE : 该图像对应的实体<br>
+                        MESSAGE_SURF_STATE state : 图像的状态(默认为msgSURFACE_SHOW)<br>
+                        可以只写前4个参数, 如：<br>
+                        <code style="font-size: 15;">
+                        &nbsp;&nbsp;code = PrintSurf(TPsurf_default, 100, make_rect(0,0), NULL);<br>
+                        </code>
+                        返回值为MESSAGECODE类型,
+                        返回该图像的code(在SurfManager中注册的下标)。<br>
+                    </p>
+                    <p id="function_RegistSprite">
+                        <font size=6 color="#5f5f5f">RegistSprite()</font><br>
+                        绘制sprite图像。<br>
+                        <br>
+                        <code>
+                            MESSAGECODE RegistSprite(<br>
+                            &nbsp;&nbsp;&nbsp;SPRITE_TYPE type,<br>
+                            &nbsp;&nbsp;&nbsp;int prior,<br>
+                            &nbsp;&nbsp;&nbsp;RECT position,<br>
+                            &nbsp;&nbsp;&nbsp;OBJECTCODE object,<br>
+                            &nbsp;&nbsp;&nbsp;MESSAGE_SURF_STATE state);<br>
+                        </code>
+                        <br>
+                        SPRITE_TYPE type : 即将绘制的sprite图像<br>
+                        int prior : 图像优先级<br>
+                        RECT position : 图像位置<br>
+                        OBJECTCODE : 该图像对应的实体<br>
+                        MESSAGE_SURF_STATE state : 图像的状态(默认为msgSPRITE_SHOW)<br>
+                        可以只写前4个参数, 如：<br>
+                        <code style="font-size: 15;">
+                        &nbsp;&nbsp;code = PrintSurf(TPsprite_default, 500, make_rect(300,600), NULL);<br>
+                        </code>
+                        返回值为MESSAGECODE类型,
+                        返回该图像的code(在SurfManager中注册的下标)。<br>
+                    </p>
+                    <p id="function_RegistFlash">
+                        <font size=6 color="#5f5f5f">RegistFlash()</font><br>
+                        绘制flash图像。<br>
+                        <br>
+                        <code>
+                            MESSAGECODE RegistFlash(<br>
+                            &nbsp;&nbsp;&nbsp;FLASH_TYPE type,<br>
+                            &nbsp;&nbsp;&nbsp;int prior,<br>
+                            &nbsp;&nbsp;&nbsp;RECT position,<br>
+                            &nbsp;&nbsp;&nbsp;OBJECTCODE object,<br>
+                            &nbsp;&nbsp;&nbsp;MESSAGE_SURF_STATE state);<br>
+                        </code>
+                        <br>
+                        FLASH_TYPE type : 即将绘制的flash图像<br>
+                        int prior : 图像优先级<br>
+                        RECT position : 图像位置<br>
+                        OBJECTCODE : 该图像对应的实体<br>
+                        MESSAGE_SURF_STATE state : 图像的状态(默认为msgFLASH_SHOW)<br>
+                        可以只写前4个参数, 如：<br>
+                        <code style="font-size: 15;">
+                        &nbsp;&nbsp;code = PrintSurf(TPflash_default, 50, make_rect(0,0), NULL);<br>
+                        </code>
+                        返回值为MESSAGECODE类型,
+                        返回该图像的code(在SurfManager中注册的下标)。<br>
+                    </p>
+                    <p id="function_PrintText">
+                        <font size=6 color="#5f5f5f">PrintText()</font><br>
+                        绘制text(文本)。<br>
+                        <br>
+                        <code>
+                            MESSAGECODE PrintText(<br>
+                            &nbsp;&nbsp;&nbsp;SURF_TYPE type,<br>
+                            &nbsp;&nbsp;&nbsp;int prior,<br>
+                            &nbsp;&nbsp;&nbsp;RECT position,<br>
+                            &nbsp;&nbsp;&nbsp;string message,<br>
+                            &nbsp;&nbsp;&nbsp;D3DCOLOR color,<br>
+                            &nbsp;&nbsp;&nbsp;OBJECTCODE object,<br>
+                            &nbsp;&nbsp;&nbsp;MESSAGE_SURF_STATE state);<br>
+                        </code>
+                        <br>
+                        SURF_TYPE type : 即将绘制的surface图像<br>
+                        int prior : 图像优先级<br>
+                        RECT position : 图像位置<br>
+                        string message : 要输出的文本<br>
+                        D3DCOLOR color : 文本的颜色<br>
+                        OBJECTCODE : 该图像对应的实体<br>
+                        MESSAGE_SURF_STATE state : 图像的状态(默认为msgTEXT_SHOW)<br>
+                        可以只写前6个参数, 如：<br>
+                        <code style="font-size: 15;">
+                        &nbsp;&nbsp;code = PrintSurf(TPsurf_default, 800, make_rect(300,500), "This is the text", DEFAULT_COLOR, NULL);<br>
+                        </code>
+                        返回值为MESSAGECODE类型,
+                        返回该图像的code(在SurfManager中注册的下标)。<br>
+                    </p>
+                    <p id="function_DeleteSurface">
+                        <font size=6 color="#5f5f5f">DeleteSurface()</font><br>
+                        <font size=4>
+                            void DeleteSurface(MESSAGECODE code);
+                        </font><br>
+                        删除图像。<br>
+                    </p>
+                    <p id="function_">
+
+                    </p>
+                </p>
+                <br><br><br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br>
+
+            </font></div>
+        </div> 
+    </body>
+</html>
